@@ -1,11 +1,9 @@
 services:
   homeassistant:
-    image: "beiler/sensoren-demo:1.0"
+    build: ./homeassistant
     container_name: homeassistant
     ports:
       - "8123:8123"
-    volumes:
-      - ./homeassistant/config:/config
     restart: unless-stopped
   mqtt:
     build: ./mosquitto

@@ -1,0 +1,70 @@
+blueprint:
+  name: MQTT Temperaturwarnung — Benachrichtigen
+  description: >-
+    Sendet eine dringende Benachrichtigung, wenn ein Temperatursensor einen
+    Schwellenwert überschreitet. Für MQTT-Sensoren gedacht, funktioniert aber
+    mit jedem numerischen `sensor`-Entity.
+  domain: automation
+  input:
+    sensor:
+      name: Temperatur-Sensor
+      description: Das zu überwachende Sensor-Entity
+      selector:
+        entity:
+          domain: sensor
+    threshold:
+      name: Schwellenwert
+      selector:
+        number:
+          max: 200
+          unit_of_measurement: '°C'
+    direction:
+      name: Auslösen wenn
+      description: Verwende 'above' (über) oder 'below' (unter) — Werte bleiben intern 'above'/'below'.
+      default: 'above'
+      selector:
+        select:
+          options:
+            - 'above'
+            - 'below'
+    notify_service:
+      name: Benachrichtigungs-Service
+      description: Welcher Dienst soll die Nachricht senden. Standard: `notify.notify`.
+      default: 'notify.notify'
+      selector:
+        service: {}
+    title:
+      name: Benachrichtigungstitel
+      default: 'Temperaturwarnung'
+      selector:
+        text: {}
+    message:
+      name: Nachricht (Template)
+      default: 'Sensor {{ state_attr(trigger.entity_id, "friendly_name") or trigger.entity_id }} hat {{ trigger.to_state.state }}{{ trigger.to_state.attributes.unit_of_measurement | default("") }} erreicht (Schwelle {{ threshold }})'
+      selector:
+        text: {}
+
+trigger:
+  - platform: numeric_state
+    entity_id: !input 'sensor'
+    above: !input 'threshold'
+  - platform: numeric_state
+    entity_id: !input 'sensor'
+    below: !input 'threshold'
+
+condition:
+  - condition: template
+    value_template: >-
+      {% if ( !input 'direction' ) == 'above' %}
+        {{ (trigger.to_state.state | float) > ( !input 'threshold' | float) }}
+      {% else %}
+        {{ (trigger.to_state.state | float) < ( !input 'threshold' | float) }}
+      {% endif %}
+
+action:
+  - service: !input 'notify_service'
+    data:
+      title: !input 'title'
+      message: !input 'message'
+
+mode: single
