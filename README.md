@@ -1,0 +1,1 @@
+Portable Anwendung zur Sammlung und Verarbeitung von Sensordaten, derzeit v.a. Heizungswerte.
