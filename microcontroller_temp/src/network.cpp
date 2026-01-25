@@ -2,19 +2,19 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
-bool startAP(const char* ssid, const char* password) {
-    // Set WiFi mode to Access Point
-    WiFi.mode(WIFI_AP);
+const unsigned long WIFI_CONNECT_TIMEOUT_MS = 10000; // 20 seconds
+
+bool startAP(const char* ssid, const char* pass) {
     
     // Start the Access Point with the given SSID and password
-    bool result = WiFi.softAP(ssid, password);
+    bool result = WiFi.softAP(ssid, pass);
     
     if (result) {
         Serial.println("Access Point started successfully");
         Serial.print("SSID: ");
         Serial.println(ssid);
         Serial.print("Password: ");
-        Serial.println(password);
+        Serial.println(pass);
     } else {
         Serial.println("Failed to start Access Point");
     }
@@ -22,8 +22,8 @@ bool startAP(const char* ssid, const char* password) {
     return result;
 }
 
+// Stop the Access Point, supposed to be called after configuration has been finished
 bool shutdownAP() {
-    // Disconnect the Access Point
     bool result = WiFi.softAPdisconnect(true);
     
     if (result) {
@@ -35,16 +35,20 @@ bool shutdownAP() {
     return result;
 }
 
-bool connectToWiFi(const char* ssid, const char* password) {
-    // Set WiFi mode to Station
-    WiFi.mode(WIFI_STA);
-    
+bool connectToWiFi(const char* ssid, const char* pass) {
+
     // Begin WiFi connection
-    WiFi.begin(ssid, password);
+    WiFi.begin(ssid, pass);
     
     Serial.print("Connecting to WiFi");
+    Serial.print(" SSID: ");
+    Serial.println(ssid);
+    Serial.print(" Password: ");
+    Serial.println(pass);
 
-    while (WiFi.status() != WL_CONNECTED && WiFi.status() != WL_CONNECT_FAILED) {
+    unsigned long startAttemptTime = millis();
+
+    while (WiFi.status() != WL_CONNECTED && WiFi.status() != WL_CONNECT_FAILED && millis() - startAttemptTime < WIFI_CONNECT_TIMEOUT_MS) {
         delay(500);
         Serial.print(".");
     }
@@ -61,7 +65,7 @@ bool connectToWiFi(const char* ssid, const char* password) {
 }
 
 // (Re-)connect to the WiFi network
-bool reconnect(const char* ssid, const char* password) {
+bool reconnect(const char* ssid, const char* pass) {
     wl_status_t status = WiFi.status();
 
     Serial.println("Current WiFi status: " + String(WiFi.status()));
@@ -74,6 +78,6 @@ bool reconnect(const char* ssid, const char* password) {
         return WiFi.reconnect(); // Attempt to reconnect
     } else
     {
-        return connectToWiFi(ssid, password); // Try to connect again
+        return connectToWiFi(ssid, pass); // Try to connect again
     }
 }

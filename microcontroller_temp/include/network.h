@@ -3,6 +3,7 @@
 
 bool startAP(const char* ssid, const char* password);
 bool shutdownAP();
-bool reconnectToWiFi(const char* ssid, const char* password);
+bool connectToWiFi(const char* ssid, const char* password);
+bool reconnect(const char* ssid, const char* password);
 
 #endif

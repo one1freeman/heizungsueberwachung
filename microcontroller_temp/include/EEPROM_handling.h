@@ -1,0 +1,4 @@
+#ifndef EEPROM_HANDLING_H
+#define EEPROM_HANDLING_H
+
+#endif

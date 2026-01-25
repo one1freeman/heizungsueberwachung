@@ -3,17 +3,14 @@
 #include "network.h"
 #include "setup_webpage.h"
 
+bool configurationMode = true;
+
 void setup() {
   Serial.begin(115200);
   setupPins();
-  // Start the Access Point
-  startAP("Heizungsueberwachung", "12345678");
-  if (!serverSetup()) {
-    Serial.println("Failed to setup server");
-  }
+  configurationServer("Heizungsueberwachung", "12345678");
 }
 
 void loop() {
-  serverHandleClient();
   delay(10);
 }
