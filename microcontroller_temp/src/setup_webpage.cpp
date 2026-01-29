@@ -5,6 +5,7 @@
 
 #include "html_pages.h"
 #include "network.h"
+#include "NVS_handling.h"
 
 DNSServer dnsServer;
 WebServer server(80);
@@ -52,6 +53,7 @@ void setupServerRoutes()
             if (connectToWiFi(ssid.c_str(), pass.c_str()))
             {
                 setupFinished = true;
+                saveCredentials(ssid.c_str(), pass.c_str());
             }
 
         } else {
@@ -77,7 +79,7 @@ void setupServerRoutes()
     });
 }
 
-bool configurationServer(const char* ssid, const char* pass)
+bool setupWebpage(const char* ssid, const char* pass)
 {
     startAP(ssid, pass);
 
