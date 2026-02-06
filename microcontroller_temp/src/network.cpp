@@ -1,8 +1,10 @@
-#include "network.h"
 #include <Arduino.h>
 #include <WiFi.h>
+#include "network.h"
 
 const unsigned long WIFI_CONNECT_TIMEOUT_MS = 10000;
+
+WiFiClient wifiClient;
 
 bool startAP(const char *ssid, const char *pass)
 {
@@ -74,7 +76,7 @@ bool connectToWiFi(const char *ssid, const char *pass)
 }
 
 // (Re-)connect to the WiFi network
-bool reconnect(const char *ssid, const char *pass)
+bool reconnectWiFi(const char *ssid, const char *pass)
 {
     wl_status_t status = WiFi.status();
 
@@ -99,4 +101,10 @@ bool reconnect(const char *ssid, const char *pass)
     Serial.println(pass);
 
     return connectToWiFi(ssid, pass); // Try to connect again
+
+}
+
+Client& getWiFiClient()
+{
+    return wifiClient;
 }

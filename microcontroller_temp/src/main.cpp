@@ -1,7 +1,9 @@
 #include <Arduino.h>
-#include "pins.h"
+
+#include "mqtt.h"
 #include "network.h"
 #include "NVS_handling.h"
+#include "pins.h"
 #include "setup_webpage.h"
 
 // credentials of local network
@@ -22,11 +24,15 @@ void setup()
   ssid = getSavedSSID();
   password = getSavedPassword();
 
-  reconnect(ssid.c_str(), password.c_str());
+  reconnectWiFi(ssid.c_str(), password.c_str());
+
+  setupMQTT(getWiFiClient());
 }
 
 void loop()
 {
-  reconnect(ssid.c_str(), password.c_str());
+  reconnectWiFi(ssid.c_str(), password.c_str());
+  mqttPublish("test/test", "online");
+  mqttLoop();
   delay(2000);
 }
