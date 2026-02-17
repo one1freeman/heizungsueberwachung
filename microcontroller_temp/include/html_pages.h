@@ -15,6 +15,8 @@ const char SETUP_PAGE[] PROGMEM = R"rawString(
             <input type="text" id="ssid" name="ssid"><br>
             <label for="pass">Passwort:</label><br>
             <input type="text" id="pass" name="pass"><br>
+            <label for="id">Geräte-ID:</label><br>
+            <input type="text" id="id" name="id"><br>
             <input type="submit" value="Absenden">
         </form>
         %s

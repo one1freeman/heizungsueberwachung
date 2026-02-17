@@ -9,6 +9,7 @@ bool setupNVS() {
         Serial.println("Failed to initialize NVS");
     } else {
         Serial.println("NVS initialized successfully");
+        return true;
     }
 
     if (preferences.getBool("configured")) {

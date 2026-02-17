@@ -42,11 +42,14 @@ void setupServerRoutes()
     server.on("/submit", HTTP_POST, []() {
         String ssid = server.arg("ssid");
         String pass = server.arg("pass");
+        String id = server.arg("id");
 
         Serial.print("Received SSID: ");
         Serial.println(ssid);
         Serial.print("Received Password: ");
         Serial.println(pass);
+        Serial.print("Received ID: ");
+        Serial.println(id);
 
         if (ssid.length() > 0 && pass.length() > 0) 
         {
@@ -62,7 +65,7 @@ void setupServerRoutes()
         
         if (setupFinished)
         {
-            server.send(200, "text/html", "<h1>Configuration Successful</h1><p>The device is now connected to the WiFi network.</p>");
+            server.send(200, "text/html", "<h1>Konfiguration Erfolgreich</h1><p>Das Gerät ist nun mit dem WiFi-Netzwerk verbunden.</p>");
         } else {
             handleRoot(true);
         }

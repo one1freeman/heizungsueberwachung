@@ -4,6 +4,7 @@
 #include "network.h"
 #include "NVS_handling.h"
 #include "pins.h"
+#include "sensors.h"
 #include "setup_webpage.h"
 
 // credentials of local network
@@ -26,13 +27,18 @@ void setup()
 
   reconnectWiFi(ssid.c_str(), password.c_str());
 
-  setupMQTT(getWiFiClient());
+  setupMQTT(getWiFiClient(), "Client0");
 }
 
 void loop()
 {
   reconnectWiFi(ssid.c_str(), password.c_str());
-  mqttPublish("test/test", "online");
+
   mqttLoop();
+  
+  char buffer[5];
+  snprintf(buffer, sizeof(buffer), "%.1f", getSensorData(0));
+  mqttPublish(buffer);
+  
   delay(2000);
 }
