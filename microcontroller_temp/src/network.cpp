@@ -47,11 +47,14 @@ bool shutdownAP()
 
 bool connectToWiFi(const char *ssid, const char *pass)
 {
+    Serial.print(" SSID: ");
+    Serial.println(ssid);
+    Serial.print(" Password: ");
+    Serial.println(pass);
+    Serial.println("Connecting to WiFi");
 
     // Begin WiFi connection
     WiFi.begin(ssid, pass);
-
-    
 
     unsigned long startAttemptTime = millis();
 
@@ -80,7 +83,6 @@ bool reconnectWiFi(const char *ssid, const char *pass)
 {
     wl_status_t status = WiFi.status();
 
-    
     if (status == WL_CONNECTED)
     {
         return true; // Already connected
@@ -93,12 +95,6 @@ bool reconnectWiFi(const char *ssid, const char *pass)
         Serial.println("Trying to reconnect...");
         return WiFi.reconnect(); // Attempt to reconnect
     }
-
-    Serial.println("Connecting to WiFi");
-    Serial.print(" SSID: ");
-    Serial.println(ssid);
-    Serial.print(" Password: ");
-    Serial.println(pass);
 
     return connectToWiFi(ssid, pass); // Try to connect again
 

@@ -17,14 +17,14 @@ void reconnect() {
 
         // Attempt to connect
         if (mqtt.connect(id.c_str(), MQTT_USER, MQTT_PASSWORD)) {
-            Serial.println("connected");
+            Serial.println("connected!");
 
             // Once connected, publish an announcement
             mqtt.publish(statusTopic.c_str(), "online");
         } else {
-            Serial.print("failed, rc=");
-            Serial.print(mqtt.state());
-            Serial.println(" try again in 5 seconds");
+            Serial.print("failed, mqtt state: ");
+            Serial.println(mqtt.state());
+            Serial.println(" try again in " + String(5000*attempt/1000) + " seconds");
 
             // Wait 5 seconds before retrying
             delay(5000*attempt);
