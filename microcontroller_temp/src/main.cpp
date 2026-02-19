@@ -2,7 +2,7 @@
 
 #include "mqtt.h"
 #include "network.h"
-#include "NVS_handling.h"
+#include "nvs_handling.h"
 #include "pins.h"
 #include "sensors.h"
 #include "setup_webpage.h"
@@ -11,34 +11,38 @@
 String ssid;
 String password;
 
+
 void setup()
 {
-  Serial.begin(115200);
   setupPins();
-
+  digitalWrite(LED, HIGH);
   
-  if (!setupNVS())
+  Serial.begin(115200);
+  
+  if (!setupNVS() || digitalRead(RESET_BUTTON) == LOW)
   {
     setupWebpage("Heizungsueberwachung", "12345678");
   }
-
+  
   ssid = getSavedSSID();
   password = getSavedPassword();
-
+  
   reconnectWiFi(ssid.c_str(), password.c_str());
-
-  setupMQTT(getWiFiClient(), "Client0");
+  
+  setupMQTT(getWiFiClient(), getSavedClientID());
+  
+  digitalWrite(LED, LOW);
 }
 
 void loop()
 {
   reconnectWiFi(ssid.c_str(), password.c_str());
-
+  
   mqttLoop();
   
-  char buffer[5];
-  snprintf(buffer, sizeof(buffer), "%.1f", getSensorData(0));
-  mqttPublish(buffer);
+  char dataBuffer[10];
+  snprintf(dataBuffer, sizeof(dataBuffer), "%.1f", getSensorData(0));
+  mqttPublish(dataBuffer);
   
   delay(2000);
 }

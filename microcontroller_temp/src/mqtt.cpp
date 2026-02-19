@@ -5,8 +5,8 @@
 PubSubClient mqtt;
 
 String id;
-char dataTopic[50];
-char statusTopic[50];
+String dataTopic;
+String statusTopic;
 
 void reconnect() {
     // Loop until we're reconnected
@@ -20,7 +20,7 @@ void reconnect() {
             Serial.println("connected");
 
             // Once connected, publish an announcement
-            mqtt.publish(statusTopic, "online");
+            mqtt.publish(statusTopic.c_str(), "online");
         } else {
             Serial.print("failed, rc=");
             Serial.print(mqtt.state());
@@ -51,8 +51,8 @@ void setupMQTT(Client& networkClient, String clientId) {
     mqtt.setCallback(callback);
 
     id = clientId;
-    snprintf(dataTopic, sizeof(dataTopic), "IoTDevice/%s/sensor0", id.c_str());
-    snprintf(statusTopic, sizeof(statusTopic), "IoTDevice/%s/status", id.c_str());
+    dataTopic = "IoTDevice/" + id + "/sensor0";
+    statusTopic = "IoTDevice/" + id + "/status";
 }
 
 void mqttLoop() {
@@ -65,7 +65,7 @@ void mqttLoop() {
 
 void mqttPublish(const char* message) {
     if (mqtt.connected()) {
-        mqtt.publish(dataTopic, message);
+        mqtt.publish(dataTopic.c_str(), message);
     } else {
         Serial.println("MQTT not connected, cannot publish message");
     }

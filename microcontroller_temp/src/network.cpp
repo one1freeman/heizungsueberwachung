@@ -6,10 +6,10 @@ const unsigned long WIFI_CONNECT_TIMEOUT_MS = 10000;
 
 WiFiClient wifiClient;
 
+// Start the Access Point for configuration with the given SSID and password
 bool startAP(const char *ssid, const char *pass)
 {
 
-    // Start the Access Point with the given SSID and password
     bool result = WiFi.softAP(ssid, pass);
 
     if (result)

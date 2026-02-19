@@ -5,7 +5,7 @@
 
 #include "html_pages.h"
 #include "network.h"
-#include "NVS_handling.h"
+#include "nvs_handling.h"
 
 DNSServer dnsServer;
 WebServer server(80);
@@ -42,21 +42,21 @@ void setupServerRoutes()
     server.on("/submit", HTTP_POST, []() {
         String ssid = server.arg("ssid");
         String pass = server.arg("pass");
-        String id = server.arg("id");
+        String mqttID = server.arg("mqttID");
 
         Serial.print("Received SSID: ");
         Serial.println(ssid);
         Serial.print("Received Password: ");
         Serial.println(pass);
-        Serial.print("Received ID: ");
-        Serial.println(id);
+        Serial.print("Received MQTT ID: ");
+        Serial.println(mqttID);
 
         if (ssid.length() > 0 && pass.length() > 0) 
         {
             if (connectToWiFi(ssid.c_str(), pass.c_str()))
             {
                 setupFinished = true;
-                saveCredentials(ssid.c_str(), pass.c_str());
+                saveCredentials(ssid, pass, mqttID);
             }
 
         } else {

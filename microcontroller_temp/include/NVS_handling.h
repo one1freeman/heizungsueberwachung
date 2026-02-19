@@ -2,9 +2,10 @@
 #define NVS_HANDLING_H
 
 bool setupNVS();
-void saveCredentials(const char* ssid, const char* password);
+void saveCredentials(String ssid, String password, String mqttClientID);
 String getSavedSSID();
 String getSavedPassword();
+String getSavedClientID();
 void closeNVS();
 
 #endif
