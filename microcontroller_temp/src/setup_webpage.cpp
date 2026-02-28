@@ -12,10 +12,47 @@ WebServer server(80);
 
 bool setupFinished = false;
 
-void handleRoot(bool connectFailed = false) {
-    char pageBuffer[1024];
-    snprintf(pageBuffer, sizeof(pageBuffer), SETUP_PAGE, connectFailed ? "<p style=\"color:red;\">Fehlgeschlagen. Bitte erneut versuchen.</p>" : "");
-    server.send(200, "text/html", pageBuffer);
+void handleRoot(bool connectFailed = false)
+{
+    if (connectFailed) {
+        server.sendHeader("Location", "/?failed=true");
+        server.send(302, "text/plain", "");
+        return;
+    }
+    server.send(200, "text/html", SETUP_PAGE);
+}
+
+void handleFormSubmit()
+{
+    String ssid = server.arg("ssid");
+    String pass = server.arg("pass");
+    String mqttID = server.arg("mqttID");
+
+    Serial.print("Received SSID: ");
+    Serial.println(ssid);
+    Serial.print("Received Password: ");
+    Serial.println(pass);
+    Serial.print("Received MQTT ID: ");
+    Serial.println(mqttID);
+
+    if (ssid.length() > 0 && pass.length() > 0) 
+    {
+        if (connectToWiFi(ssid.c_str(), pass.c_str()))
+        {
+            setupFinished = true;
+            saveCredentials(ssid, pass, mqttID);
+        }
+
+    } else {
+        Serial.println("SSID or Password is empty.");
+    }
+    
+    if (setupFinished)
+    {
+        server.send(200, "text/html", "<h1>Konfiguration Erfolgreich</h1><p>Das Gerät ist nun mit dem WiFi-Netzwerk verbunden.</p>");
+    } else {
+        handleRoot(true);
+    }
 }
 
 void serverHandleClient()
@@ -40,43 +77,15 @@ void setupServerRoutes()
     });
 
     server.on("/submit", HTTP_POST, []() {
-        String ssid = server.arg("ssid");
-        String pass = server.arg("pass");
-        String mqttID = server.arg("mqttID");
-
-        Serial.print("Received SSID: ");
-        Serial.println(ssid);
-        Serial.print("Received Password: ");
-        Serial.println(pass);
-        Serial.print("Received MQTT ID: ");
-        Serial.println(mqttID);
-
-        if (ssid.length() > 0 && pass.length() > 0) 
-        {
-            if (connectToWiFi(ssid.c_str(), pass.c_str()))
-            {
-                setupFinished = true;
-                saveCredentials(ssid, pass, mqttID);
-            }
-
-        } else {
-            Serial.println("SSID or Password is empty.");
-        }
-        
-        if (setupFinished)
-        {
-            server.send(200, "text/html", "<h1>Konfiguration Erfolgreich</h1><p>Das Gerät ist nun mit dem WiFi-Netzwerk verbunden.</p>");
-        } else {
-            handleRoot(true);
-        }
+        handleFormSubmit();
     });
     
     server.on("/favicon.ico", HTTP_GET, []() {
         server.send(204); // No Content
     });
     
-    // necessary for captive portal redirection
     server.onNotFound([]() {
+        // necessary for captive portal redirection
         server.sendHeader("Location", "http://192.168.4.1/", true);
         server.send(302, "text/plain", "");
     });

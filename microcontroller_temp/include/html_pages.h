@@ -7,6 +7,13 @@ const char SETUP_PAGE[] PROGMEM = R"rawString(
     <head>
         <meta charset="UTF-8">
         <title>Setup Page</title>
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.get("failed") === "true") {
+                document.getElementById("error-message").textContent = "Fehlgeschlagen. Bitte erneut versuchen.";
+            }
+        </script>
     </head>
     <body>
         <h1>Willkommen zur Setup-Seite</h1>
@@ -19,7 +26,7 @@ const char SETUP_PAGE[] PROGMEM = R"rawString(
             <input type="text" id="mqttID" name="mqttID"><br>
             <input type="submit" value="Absenden">
         </form>
-        %s
+        <p id="error-message" style="color:red;"></p>
     </body>
 </html>
 )rawString";
