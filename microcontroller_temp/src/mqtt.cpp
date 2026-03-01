@@ -7,6 +7,8 @@ PubSubClient mqtt;
 String id;
 String dataTopic;
 String statusTopic;
+String discovery_topic;
+String discovery_payload;
 
 void reconnect() {
     // Loop until we're reconnected
@@ -19,8 +21,8 @@ void reconnect() {
         if (mqtt.connect(id.c_str(), MQTT_USER, MQTT_PASSWORD)) {
             Serial.println("connected!");
 
-            // Once connected, publish an announcement
-            mqtt.publish(statusTopic.c_str(), "online");
+            // Once connected, publish mqtt discovery payload
+            mqtt.publish(discovery_topic.c_str(), discovery_payload.c_str(), true);
         } else {
             Serial.print("failed, mqtt state: ");
             Serial.println(mqtt.state());
@@ -45,14 +47,22 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.println();
 }
 
-void setupMQTT(Client& networkClient, String clientId) {
+void setupMQTT(Client& networkClient, String uniqueId) {
     mqtt.setClient(networkClient);
     mqtt.setServer(MQTT_SERVER, MQTT_PORT);
     mqtt.setCallback(callback);
 
-    id = clientId;
-    dataTopic = "IoTDevice/" + id + "/sensor0";
-    statusTopic = "IoTDevice/" + id + "/status";
+    id = uniqueId;
+    dataTopic = "sensor/" + id + "/state";
+    statusTopic = "sensor/" + id + "/status";
+    discovery_topic = "homeassistant/sensor/" + id + "/config";
+    discovery_payload = "{
+        \"name\": \"" + id + "\",
+        \"device_class\": \"temperature\",
+        \"state_topic\": \"" + dataTopic + "\",
+        \"unique_id\": \"" + id + "\",
+        \"unit_of_measurement\": \"°C\"
+    }";
 }
 
 void mqttLoop() {

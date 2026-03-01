@@ -1,0 +1,6 @@
+default_config:
+
+mqtt:
+  broker: mqtt
+  discovery: true
+  discovery_prefix: homeassistant

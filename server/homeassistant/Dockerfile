@@ -1,6 +1,7 @@
 FROM homeassistant/home-assistant:latest
 
-COPY mqtt_temp_alert.yaml /blueprints/automation/one1freeman/mqtt_temp_alert.yaml
+COPY configuration.yaml homeassistant/
+COPY mqtt_temp_alert.yaml homeassistant/blueprints/automation/
 
 ENV TZ=Europe/Berlin
 
