@@ -1,28 +1,22 @@
 blueprint:
-  name: Temperature Push Alert
-  description: Sends a push notification to a specific device when temperature is too high.
+  name: Übertemperatur Alarm
+  description: Sende eine Push-Benachrichtigung, wenn die Temperatur des Sensors einen bestimmten Schwellenwert überschreitet.
   domain: automation
   input:
     temp_sensor:
-      name: Temperature Sensor
+      name: Temperatursensor
       selector:
         entity:
           domain: sensor
           device_class: temperature
     threshold:
-      name: Threshold
+      name: Obergrenze (°C)
       default: 25
       selector:
         number:
           min: 0
-          max: 100
+          max: 200
           unit_of_measurement: "°C"
-    notify_device:
-      name: Device to notify
-      description: Select the device running the Home Assistant app.
-      selector:
-        device:
-          integration: mobile_app
 
 trigger:
   platform: numeric_state
@@ -30,8 +24,8 @@ trigger:
   above: !input threshold
 
 action:
-  - domain: mobile_app
-    type: notify
-    device_id: !input notify_device
-    title: "High Temp Alert!"
-    message: "The sensor {{ state_attr(trigger.entity_id, 'friendly_name') }} is at {{ trigger.to_state.state }}°C."
+  - service: notify.notify
+    data:
+      title: "Überhitzungswarnung"
+      message: "Der Sensor {{ state_attr(trigger.entity_id, 'friendly_name') }} ist bei {{ trigger.to_state.state }}°C."
+  - delay: "02:00:00"

@@ -1,7 +1,8 @@
 FROM homeassistant/home-assistant:latest
 
-COPY configuration.yaml homeassistant/
-COPY mqtt_temp_alert.yaml homeassistant/blueprints/automation/
+RUN mkdir -p /config/blueprints/automation/
+
+COPY mqtt_temp_alert.yaml /config/blueprints/automation/
 
 ENV TZ=Europe/Berlin
 
