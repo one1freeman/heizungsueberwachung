@@ -56,12 +56,12 @@ void setupMQTT(Client& networkClient, String uniqueId) {
     dataTopic = "sensor/" + id + "/state";
     statusTopic = "sensor/" + id + "/status";
     discovery_topic = "homeassistant/sensor/" + id + "/config";
-    discovery_payload = "{
-        \"name\": \"" + id + "\",
-        \"device_class\": \"temperature\",
-        \"state_topic\": \"" + dataTopic + "\",
-        \"unique_id\": \"" + id + "\",
-        \"unit_of_measurement\": \"°C\"
+    discovery_payload = "{\
+        \"name\": \"" + id + "\",\
+        \"device_class\": \"temperature\",\
+        \"state_topic\": \"" + dataTopic + "\",\
+        \"unique_id\": \"" + id + "\",\
+        \"unit_of_measurement\": \"°C\"\
     }";
 }
 

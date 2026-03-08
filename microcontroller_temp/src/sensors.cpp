@@ -1,3 +1,11 @@
+int cycleCounter = 0;
 float getSensorData(int id) {
-    return 1225.1223 + id;
+    if (cycleCounter == 10)
+    {
+        cycleCounter = 0;
+    }
+    
+    float value = 60.261 + id + cycleCounter*0.5;
+    cycleCounter++;
+    return value;
 }
