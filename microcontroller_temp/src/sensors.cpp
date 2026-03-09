@@ -1,11 +1,17 @@
-int cycleCounter = 0;
+#include "sensors.h"
+#include "pins.h"
+#include <Arduino.h>
+#include <DallasTemperature.h>
+#include <OneWire.h>
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+
+void setupSensors() {
+    sensors.begin();
+}
+
 float getSensorData(int id) {
-    if (cycleCounter == 10)
-    {
-        cycleCounter = 0;
-    }
-    
-    float value = 60.261 + id + cycleCounter*0.5;
-    cycleCounter++;
-    return value;
+    sensors.requestTemperatures();
+    return sensors.getTempCByIndex(id);
 }

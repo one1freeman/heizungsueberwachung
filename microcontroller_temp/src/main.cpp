@@ -30,6 +30,8 @@ void setup()
   reconnectWiFi(ssid.c_str(), password.c_str());
   
   setupMQTT(getWiFiClient(), getSavedClientID());
+
+  setupSensors();
   
   digitalWrite(LED, LOW);
 }
